@@ -58,16 +58,6 @@ async function run() {
       res.send(result)
     })
 
-    // app.get('/categories', async(req, res) => {
-    //   const query = {}
-    //   if(req.query?.category){
-    //     query = {category: req.query.category}
-    //   }
-    //   const cursor = toyCollection.find(query)
-    //   const result = await cursor.toArray()
-    //   res.send(result)
-    // })
-
     app.delete('/allToys/items/:id', async(req, res) => {
       const id = req.params.id
       const query = {_id: new ObjectId(id)}
