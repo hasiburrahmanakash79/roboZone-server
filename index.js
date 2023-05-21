@@ -53,13 +53,13 @@ async function run() {
 
     // filter specific email data 
     app.get('/myToy', async(req, res) => {
-      let query = {}
-      if(req.query?.email){
-        query = {email: req.query.email}
-      }
-      const cursor =  toyCollection.find(query)
+      const email = req.query?.email
+      const type = req.query?.type
+      console.log(type);
+      const cursor =  toyCollection.find({email: email}).sort({price: -1})
       const result = await cursor.toArray()
       res.send(result)
+      console.log(result);
     })
     
     // delete data 
@@ -71,16 +71,20 @@ async function run() {
     })
 
     // update data 
-    app.patch('/allToys/:id', async(req, res) => {
+    app.put('/allToys/update/:id', async(req, res) => {
       const id =req.params.id;
       const query = {_id: new ObjectId(id)};
-      const updateToy = req.body;
+      const update = req.body;
+      const options ={upsert: true}
       const updateDoc = {
-        $set: {
-          status: updateToy.status
+        $set: { 
+          price: update.price,
+          quantity: update.quantity,
+          description: update.description
+          
         }
       };
-      const result = await toyCollection.updateOne(query, updateDoc);
+      const result = await toyCollection.updateOne(query, updateDoc, options);
       res.send(result);
     })
 
