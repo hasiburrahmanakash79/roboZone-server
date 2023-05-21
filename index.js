@@ -28,6 +28,7 @@ async function run() {
 
     const toyCollection = client.db('robotWorld').collection('allToys')
 
+    // post data in mongodb
     app.post('/allToys', async(req, res) => {
         const haiku = req.body
         console.log("data", haiku);
@@ -35,12 +36,14 @@ async function run() {
         res.send(result)
     })
 
+    // get all data from mongodb 
     app.get('/allToys', async(req, res) => {
       const toys = toyCollection.find()
       const result = await toys.toArray()
       res.send(result)
     })
 
+    // find single toy data using id
     app.get('/singleToy/:id', async(req, res) =>{
       const id = req.params.id 
       const query = {_id: new ObjectId(id)}
@@ -48,6 +51,7 @@ async function run() {
       res.send(result)
     })
 
+    // filter specific email data 
     app.get('/myToy', async(req, res) => {
       let query = {}
       if(req.query?.email){
@@ -57,12 +61,27 @@ async function run() {
       const result = await cursor.toArray()
       res.send(result)
     })
-
+    
+    // delete data 
     app.delete('/allToys/items/:id', async(req, res) => {
       const id = req.params.id
       const query = {_id: new ObjectId(id)}
       const result = await toyCollection.deleteOne(query)
       res.send(result)
+    })
+
+    // update data 
+    app.patch('/allToys/:id', async(req, res) => {
+      const id =req.params.id;
+      const query = {_id: new ObjectId(id)};
+      const updateToy = req.body;
+      const updateDoc = {
+        $set: {
+          status: updateToy.status
+        }
+      };
+      const result = await toyCollection.updateOne(query, updateDoc);
+      res.send(result);
     })
 
 
